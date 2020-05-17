@@ -2,16 +2,195 @@ package rules;
 dialect  "mvel"
 
 import com.sbnz.covid19cdss.model.Product
+import com.sbnz.covid19cdss.model.OnlineEvaluation
+import com.sbnz.covid19cdss.model.OnlineForm
+import com.sbnz.covid19cdss.Utility.DebugHelper
 
 rule "Offer for Diamond"
+    agenda-group "Example"
 	when
 		productObject: Product(type=="diamond")
 	then
 		productObject.setDiscount(15);
 	end
 rule "Offer for Gold"
+    agenda-group "Example"
 	when
 		productObject: Product(type=="gold")
 	then
 		productObject.setDiscount(25);
 	end
+
+rule "Online form age"
+    lock-on-active
+    when
+        $evaluation: OnlineEvaluation()
+        OnlineEvaluation(DebugHelper.debugLhsValue($evaluation) == true) from $evaluation
+        $form: OnlineForm(age > 60)
+        OnlineEvaluation(DebugHelper.debugLhsValue($form) == true) from $evaluation
+
+    then
+        $evaluation.setScoreMultiplier($evaluation.getScoreMultiplier() * (2 + ($form.getAge()-60)/10.0));
+        update($evaluation)
+    end
+
+rule "Online form riskGroup"
+    lock-on-active
+    when
+        $evaluation: OnlineEvaluation()
+        $form: OnlineForm(riskGroup)
+    then
+        $evaluation.setScoreMultiplier($evaluation.getScoreMultiplier() * 2);
+        update($evaluation)
+    end
+
+rule "Online form fever"
+    lock-on-active
+    when
+        $evaluation: OnlineEvaluation()
+        $form: OnlineForm(fever)
+    then
+        $evaluation.setScore($evaluation.getScore() + 1);
+        update($evaluation)
+    end
+
+rule "Online form dryCough"
+    lock-on-active
+    when
+        $evaluation: OnlineEvaluation()
+        $form: OnlineForm(dryCough)
+    then
+        $evaluation.setScore($evaluation.getScore() + 1);
+        update($evaluation)
+    end
+
+rule "Online form tiredness"
+    lock-on-active
+    when
+        $evaluation: OnlineEvaluation()
+        $form: OnlineForm(tiredness)
+    then
+        $evaluation.setScore($evaluation.getScore() + 1);
+        update($evaluation)
+    end
+
+rule "Online form aches"
+    lock-on-active
+    when
+        $evaluation: OnlineEvaluation()
+        $form: OnlineForm(aches)
+    then
+        $evaluation.setScore($evaluation.getScore() + 1);
+        update($evaluation)
+    end
+
+rule "Online form soreThroat"
+    lock-on-active
+    when
+        $evaluation: OnlineEvaluation()
+        $form: OnlineForm(soreThroat)
+    then
+        $evaluation.setScore($evaluation.getScore() + 1);
+        update($evaluation)
+    end
+
+rule "Online form diarrhoea"
+    lock-on-active
+    when
+        $evaluation: OnlineEvaluation()
+        $form: OnlineForm(diarrhoea)
+    then
+        $evaluation.setScore($evaluation.getScore() + 1);
+        update($evaluation)
+    end
+
+rule "Online form conjuctivits"
+    lock-on-active
+    when
+        $evaluation: OnlineEvaluation()
+        $form: OnlineForm(conjuctivits)
+    then
+        $evaluation.setScore($evaluation.getScore() + 1.5);
+        update($evaluation)
+    end
+
+rule "Online form headache"
+    lock-on-active
+    when
+        $evaluation: OnlineEvaluation()
+        $form: OnlineForm(headache)
+    then
+        $evaluation.setScore($evaluation.getScore() + 1);
+        update($evaluation)
+    end
+
+rule "Online form lossOfTasteOrSmell"
+    lock-on-active
+    when
+        $evaluation: OnlineEvaluation()
+        $form: OnlineForm(lossOfTasteOrSmell)
+    then
+        $evaluation.setScore($evaluation.getScore() + 5);
+        update($evaluation)
+    end
+
+rule "Online form rashDiscolouration"
+    lock-on-active
+    when
+        $evaluation: OnlineEvaluation()
+        $form: OnlineForm(rashDiscolouration)
+    then
+        $evaluation.setScore($evaluation.getScore() + 3);
+        update($evaluation)
+    end
+
+rule "Online form difficultyBreathing"
+    lock-on-active
+    when
+        $evaluation: OnlineEvaluation()
+        $form: OnlineForm(difficultyBreathing)
+    then
+        $evaluation.setScore($evaluation.getScore() + 100);
+        update($evaluation)
+    end
+
+rule "Online form chestPains"
+    lock-on-active
+    when
+        $evaluation: OnlineEvaluation()
+        $form: OnlineForm(chestPains)
+    then
+        $evaluation.setScore($evaluation.getScore() + 100);
+        update($evaluation)
+    end
+
+rule "Online form lossOfSpeachOrMovement"
+    lock-on-active
+    when
+        $evaluation: OnlineEvaluation()
+        $form: OnlineForm(lossOfSpeachOrMovement)
+    then
+        $evaluation.setScore($evaluation.getScore() + 100);
+        update($evaluation)
+    end
+
+rule "Score online evaluation go to health center"
+    when
+        $evaluation: OnlineEvaluation(score * scoreMultiplier >= 10, score * scoreMultiplier < 20)
+    then
+        $evaluation.setStatus("Visit the nearest health center");
+    end
+
+rule "Score online evaluation go hospital"
+    when
+        $evaluation: OnlineEvaluation(score * scoreMultiplier >= 20, score * scoreMultiplier < 50)
+    then
+        $evaluation.setStatus("Go to the nearest hospital");
+    end
+
+rule "Score online evaluation go to emergancy hospital"
+    when
+        $evaluation: OnlineEvaluation(score * scoreMultiplier >= 50)
+    then
+        $evaluation.setStatus("Immediately go to the nearest emergency room");
+    end
