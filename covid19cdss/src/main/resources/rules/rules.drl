@@ -1,25 +1,10 @@
 package rules;
 dialect  "mvel"
 
-import com.sbnz.covid19cdss.model.Product
 import com.sbnz.covid19cdss.model.OnlineEvaluation
 import com.sbnz.covid19cdss.model.OnlineForm
 import com.sbnz.covid19cdss.Utility.DebugHelper
 
-rule "Offer for Diamond"
-    agenda-group "Example"
-	when
-		productObject: Product(type=="diamond")
-	then
-		productObject.setDiscount(15);
-	end
-rule "Offer for Gold"
-    agenda-group "Example"
-	when
-		productObject: Product(type=="gold")
-	then
-		productObject.setDiscount(25);
-	end
 
 rule "Online form age"
     lock-on-active
