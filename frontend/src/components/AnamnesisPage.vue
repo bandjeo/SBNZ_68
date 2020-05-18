@@ -204,6 +204,7 @@
         <v-card>
           <v-card-text>
             <h2>Patient should{{ dialogTest ? '' : 'not '}} be tested</h2>
+            <br>
             <h2>Patiend should{{ dialogTestMessage }}</h2>
           </v-card-text>
           <v-card-actions>
@@ -270,6 +271,8 @@ import { submitAnamnesis } from '../axiosService.js'
           riskGroup: this.riskGroup,
           travelled: this.travelled,
           inContact: this.inContact,
+          height: this.height,
+          weight: this.weight,
 
           fever: this.fever,
           dryCough: this.dryCough,
@@ -285,7 +288,16 @@ import { submitAnamnesis } from '../axiosService.js'
 
           difficultyBreathing: this.difficultyBreathing,
           chestPains: this.chestPains,
-          lossOfSpeachOrMovement: this.lossOfSpeachOrMovement
+          lossOfSpeachOrMovement: this.lossOfSpeachOrMovement,
+
+          asthma: this.asthma,
+          chronicKidney: this.chronicKidney,
+          chronicLung: this.chronicLung,
+          diabetes: this.diabetes,
+          hemoglobinDisorder: this.hemoglobinDisorder,
+          immunocompromised: this.immunocompromised,
+          liverDisease: this.liverDisease,
+          heartConditions: this.heartConditions,
 
         }).then(response => {
           this.dialogTest = response.data.shouldTest;

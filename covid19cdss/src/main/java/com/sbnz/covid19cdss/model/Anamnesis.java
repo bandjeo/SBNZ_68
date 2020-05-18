@@ -1,5 +1,7 @@
 package com.sbnz.covid19cdss.model;
 
+import org.kie.api.definition.type.PropertyReactive;
+
 public class Anamnesis {
     // personal info
     private int age;
