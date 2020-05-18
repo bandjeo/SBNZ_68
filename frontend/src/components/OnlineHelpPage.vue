@@ -201,7 +201,7 @@
           lossOfSpeachOrMovement: this.lossOfSpeachOrMovement
 
         }).then(response => {
-          alert(response.data.message);
+          this.$router.push({path: `/onlineInstruction/${response.data}`})
         })
       }
     },

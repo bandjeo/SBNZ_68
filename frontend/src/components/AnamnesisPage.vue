@@ -200,7 +200,18 @@
     </div>
     
     
-
+    <v-dialog v-model="dialog" max-width="500">
+        <v-card>
+          <v-card-text>
+            <h2>Patient should{{ dialogTest ? '' : 'not '}} be tested</h2>
+            <h2>Patiend should{{ dialogTestMessage }}</h2>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-brn text color="#FFFFFF" class="mt-10 mr-2" @click="dialog=false">Close</v-brn>
+          </v-card-actions>
+        </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -247,6 +258,9 @@ import { submitAnamnesis } from '../axiosService.js'
         liverDisease: false,
         heartConditions: false,
 
+        dialog: false,
+        dialogTest: '',
+        dialogLocationMessage: '',
       }
     },
     methods: {
@@ -274,7 +288,22 @@ import { submitAnamnesis } from '../axiosService.js'
           lossOfSpeachOrMovement: this.lossOfSpeachOrMovement
 
         }).then(response => {
-          alert(response.data);
+          this.dialogTest = response.data.shouldTest;
+          switch(response.data.recoveryLocation) {
+            case 'Home':
+              this.dialogTestMessage = 'be sent home';
+              break;
+            case 'IsolatedCare':
+              this.dialogTestMessage = 'be sent to isolated care';
+              break;
+            case 'HospitalCare':
+              this.dialogTestMessage = 'be sent to hospital care';
+              break;
+            case 'IntensiveCare':
+              this.dialogTestMessage = 'be sent to intesive care';
+              break;
+          }
+          this.dialog = true;
         })
       }
 

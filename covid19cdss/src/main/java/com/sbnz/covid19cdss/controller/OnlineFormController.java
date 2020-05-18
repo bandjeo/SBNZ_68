@@ -24,9 +24,8 @@ public class OnlineFormController {
 
     @RequestMapping(value="/evaluate", method = RequestMethod.POST,
             produces = "application/json", consumes = "application/json")
-    public ResponseEntity<MessageDto> evaluateOnlineForm(@RequestBody OnlineForm onlineForm) {
+    public ResponseEntity<OnlineInstruction> evaluateOnlineForm(@RequestBody OnlineForm onlineForm) {
         OnlineInstruction instruction = service.evaulateOnlineForm(onlineForm);
-        String message = EnumerationUtility.OnlineInstructionToString(instruction);
-        return new ResponseEntity<MessageDto>(new MessageDto(message), HttpStatus.OK);
+        return new ResponseEntity<OnlineInstruction>(instruction, HttpStatus.OK);
     }
 }

@@ -1,5 +1,6 @@
 import AnamnesisPage from './components/AnamnesisPage.vue'
 import OnlineHelpPage from './components/OnlineHelpPage.vue'
+import OnlineInstructionPage from './components/OnlineInstructionPage.vue'
 
 const routes = [
     {
@@ -11,6 +12,11 @@ const routes = [
       name: "anamnesis",
       path: "/anamnesis",
       component: AnamnesisPage
+    },
+    {
+      name: "onlineInstruction",
+      path: "/onlineInstruction/:instruction",
+      component: OnlineInstructionPage,
     },
     { path: "/", redirect: "/onlineHelp" }
   ];
