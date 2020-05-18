@@ -4,17 +4,17 @@ public class OnlineEvaluation {
 
     private double score;
     private double scoreMultiplier;
-    private String status;
+    private OnlineInstruction instruction;
 
     public OnlineEvaluation() {
-        score = 0;
+        this.score = 0;
         this.scoreMultiplier = 1;
     }
 
-    public OnlineEvaluation(double score, String status, double scoreMultiplier) {
+    public OnlineEvaluation(double score, double scoreMultiplier, OnlineInstruction instruction) {
         this.score = score;
-        this.status = status;
         this.scoreMultiplier = scoreMultiplier;
+        this.instruction = instruction;
     }
 
     public double getScore() {
@@ -25,19 +25,19 @@ public class OnlineEvaluation {
         this.score = score;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
     public double getScoreMultiplier() {
         return scoreMultiplier;
     }
 
     public void setScoreMultiplier(double scoreMultiplier) {
         this.scoreMultiplier = scoreMultiplier;
+    }
+
+    public OnlineInstruction getInstruction() {
+        return instruction;
+    }
+
+    public void setInstruction(OnlineInstruction instruction) {
+        this.instruction = instruction;
     }
 }

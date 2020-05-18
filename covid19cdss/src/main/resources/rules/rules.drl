@@ -4,6 +4,12 @@ dialect  "mvel"
 import com.sbnz.covid19cdss.model.OnlineEvaluation
 import com.sbnz.covid19cdss.model.OnlineForm
 import com.sbnz.covid19cdss.Utility.DebugHelper
+import com.sbnz.covid19cdss.model.SymptomScores
+import com.sbnz.covid19cdss.model.OnlineInstruction
+import com.sbnz.covid19cdss.model.Anamnesis
+import com.sbnz.covid19cdss.model.AnamnesisEvaluation
+import com.sbnz.covid19cdss.model.RecoveryLocation
+import com.sbnz.covid19cdss.model.TestingStrategy
 
 
 rule "Online form age"
@@ -35,7 +41,7 @@ rule "Online form fever"
         $evaluation: OnlineEvaluation()
         $form: OnlineForm(fever)
     then
-        $evaluation.setScore($evaluation.getScore() + 1);
+        $evaluation.setScore($evaluation.getScore() + SymptomScores.fever);
         update($evaluation)
     end
 
@@ -45,7 +51,7 @@ rule "Online form dryCough"
         $evaluation: OnlineEvaluation()
         $form: OnlineForm(dryCough)
     then
-        $evaluation.setScore($evaluation.getScore() + 1);
+        $evaluation.setScore($evaluation.getScore() + SymptomScores.dryCough);
         update($evaluation)
     end
 
@@ -55,7 +61,7 @@ rule "Online form tiredness"
         $evaluation: OnlineEvaluation()
         $form: OnlineForm(tiredness)
     then
-        $evaluation.setScore($evaluation.getScore() + 1);
+        $evaluation.setScore($evaluation.getScore() + SymptomScores.tiredness);
         update($evaluation)
     end
 
@@ -65,7 +71,7 @@ rule "Online form aches"
         $evaluation: OnlineEvaluation()
         $form: OnlineForm(aches)
     then
-        $evaluation.setScore($evaluation.getScore() + 1);
+        $evaluation.setScore($evaluation.getScore() + SymptomScores.aches);
         update($evaluation)
     end
 
@@ -75,7 +81,7 @@ rule "Online form soreThroat"
         $evaluation: OnlineEvaluation()
         $form: OnlineForm(soreThroat)
     then
-        $evaluation.setScore($evaluation.getScore() + 1);
+        $evaluation.setScore($evaluation.getScore() + SymptomScores.soreThroat);
         update($evaluation)
     end
 
@@ -85,7 +91,7 @@ rule "Online form diarrhoea"
         $evaluation: OnlineEvaluation()
         $form: OnlineForm(diarrhoea)
     then
-        $evaluation.setScore($evaluation.getScore() + 1);
+        $evaluation.setScore($evaluation.getScore() + SymptomScores.diarrhoea);
         update($evaluation)
     end
 
@@ -95,7 +101,7 @@ rule "Online form conjuctivits"
         $evaluation: OnlineEvaluation()
         $form: OnlineForm(conjuctivits)
     then
-        $evaluation.setScore($evaluation.getScore() + 1.5);
+        $evaluation.setScore($evaluation.getScore() + SymptomScores.conjuctivits);
         update($evaluation)
     end
 
@@ -105,7 +111,7 @@ rule "Online form headache"
         $evaluation: OnlineEvaluation()
         $form: OnlineForm(headache)
     then
-        $evaluation.setScore($evaluation.getScore() + 1);
+        $evaluation.setScore($evaluation.getScore() + SymptomScores.headache);
         update($evaluation)
     end
 
@@ -115,7 +121,7 @@ rule "Online form lossOfTasteOrSmell"
         $evaluation: OnlineEvaluation()
         $form: OnlineForm(lossOfTasteOrSmell)
     then
-        $evaluation.setScore($evaluation.getScore() + 5);
+        $evaluation.setScore($evaluation.getScore() + SymptomScores.lossOfTasteOrSmell);
         update($evaluation)
     end
 
@@ -125,7 +131,7 @@ rule "Online form rashDiscolouration"
         $evaluation: OnlineEvaluation()
         $form: OnlineForm(rashDiscolouration)
     then
-        $evaluation.setScore($evaluation.getScore() + 3);
+        $evaluation.setScore($evaluation.getScore() + SymptomScores.rashDiscolouration);
         update($evaluation)
     end
 
@@ -135,7 +141,7 @@ rule "Online form difficultyBreathing"
         $evaluation: OnlineEvaluation()
         $form: OnlineForm(difficultyBreathing)
     then
-        $evaluation.setScore($evaluation.getScore() + 100);
+        $evaluation.setScore($evaluation.getScore() + SymptomScores.difficultyBreathing);
         update($evaluation)
     end
 
@@ -145,7 +151,7 @@ rule "Online form chestPains"
         $evaluation: OnlineEvaluation()
         $form: OnlineForm(chestPains)
     then
-        $evaluation.setScore($evaluation.getScore() + 100);
+        $evaluation.setScore($evaluation.getScore() + SymptomScores.chestPains);
         update($evaluation)
     end
 
@@ -155,7 +161,7 @@ rule "Online form lossOfSpeachOrMovement"
         $evaluation: OnlineEvaluation()
         $form: OnlineForm(lossOfSpeachOrMovement)
     then
-        $evaluation.setScore($evaluation.getScore() + 100);
+        $evaluation.setScore($evaluation.getScore() + SymptomScores.lossOfSpeachOrMovement);
         update($evaluation)
     end
 
@@ -163,19 +169,326 @@ rule "Score online evaluation go to health center"
     when
         $evaluation: OnlineEvaluation(score * scoreMultiplier >= 10, score * scoreMultiplier < 20)
     then
-        $evaluation.setStatus("Visit the nearest health center");
+        $evaluation.setInstruction(OnlineInstruction.VisitHealthCenter);
     end
 
 rule "Score online evaluation go hospital"
     when
         $evaluation: OnlineEvaluation(score * scoreMultiplier >= 20, score * scoreMultiplier < 50)
     then
-        $evaluation.setStatus("Go to the nearest hospital");
+        $evaluation.setInstruction(OnlineInstruction.VisitHospital);
     end
 
 rule "Score online evaluation go to emergancy hospital"
     when
         $evaluation: OnlineEvaluation(score * scoreMultiplier >= 50)
     then
-        $evaluation.setStatus("Immediately go to the nearest emergency room");
+        $evaluation.setInstruction(OnlineInstruction.GoToEmergencyHospital);
     end
+
+rule "Anamnesis obesity"
+    lock-on-active
+    when
+        $anamnesis: Anamnesis(weight*10000.0/(height*height) >= 40)
+    then
+        $anamnesis.setObese(true);
+        update($anamnesis)
+    end
+
+rule "Anamnesis chronicKidney"
+    lock-on-active
+    when
+        $anamnesis: Anamnesis(chronicKidney)
+    then
+        $anamnesis.setRiskGroup(true);
+        update($anamnesis)
+    end
+
+rule "Anamnesis chronicLung"
+    lock-on-active
+    when
+        $anamnesis: Anamnesis(chronicLung)
+    then
+        $anamnesis.setRiskGroup(true);
+        update($anamnesis)
+    end
+
+rule "Anamnesis diabetes"
+    lock-on-active
+    when
+        $anamnesis: Anamnesis(diabetes)
+    then
+        $anamnesis.setRiskGroup(true);
+        update($anamnesis)
+    end
+
+rule "Anamnesis hemoglobinDisorder"
+    lock-on-active
+    when
+        $anamnesis: Anamnesis(hemoglobinDisorder)
+    then
+        $anamnesis.setRiskGroup(true);
+        update($anamnesis)
+    end
+
+rule "Anamnesis immunocompromised"
+    lock-on-active
+    when
+        $anamnesis: Anamnesis(immunocompromised)
+    then
+        $anamnesis.setRiskGroup(true);
+        update($anamnesis)
+    end
+
+rule "Anamnesis liverDisease"
+    lock-on-active
+    when
+        $anamnesis: Anamnesis(liverDisease)
+    then
+        $anamnesis.setRiskGroup(true);
+        update($anamnesis)
+    end
+
+rule "Anamnesis heartConditions"
+    lock-on-active
+    when
+        $anamnesis: Anamnesis(heartConditions)
+    then
+        $anamnesis.setRiskGroup(true);
+        update($anamnesis)
+    end
+
+rule "Anamnesis asthma"
+    lock-on-active
+    when
+        $anamnesis: Anamnesis(asthma)
+    then
+        $anamnesis.setRiskGroup(true);
+        update($anamnesis)
+    end
+
+rule "Anamnesis risk group"
+    when
+        $anamnesis: Anamnesis(riskGroup)
+        $evaluation: AnamnesisEvaluation()
+    then
+        $evaluation.setHealthRistMultiplier($evaluation.getHealthRistMultiplier() * 2);
+        update($evaluation)
+    end
+
+rule "Anamnesis age"
+    lock-on-active
+    when
+        $anamnesis: Anamnesis(age > 60)
+        $evaluation: AnamnesisEvaluation()
+    then
+        $evaluation.setHealthRistMultiplier($evaluation.getHealthRistMultiplier() * (2 + ($anamnesis.getAge()-60)/10.0));
+        update($evaluation)
+    end
+
+rule "Anamnesis travelled"
+    lock-on-active
+    when
+        $anamnesis: Anamnesis(travelled)
+        $evaluation: AnamnesisEvaluation()
+    then
+        $evaluation.setInfectionRiskMultiplier($evaluation.getInfectionRiskMultiplier() * 2);
+        update($evaluation)
+    end
+
+rule "Anamnesis in contact"
+    lock-on-active
+    when
+        $anamnesis: Anamnesis(inContact)
+        $evaluation: AnamnesisEvaluation()
+    then
+        $evaluation.setInfectionRiskMultiplier($evaluation.getInfectionRiskMultiplier() * 2);
+        update($evaluation)
+    end
+
+rule "Anamnesis fever"
+	lock-on-active
+	when
+		$anamnesis: Anamnesis(fever)
+		$evaluation: AnamnesisEvaluation()
+	then
+		$evaluation.setHealthRisk($evaluation.getHealthRisk() + SymptomScores.fever);
+		$evaluation.setInfectionRisk($evaluation.getInfectionRisk() + 1);
+		update($evaluation)
+	end
+
+rule "Anamnesis dryCough"
+	lock-on-active
+	when
+		$anamnesis: Anamnesis(dryCough)
+		$evaluation: AnamnesisEvaluation()
+	then
+		$evaluation.setHealthRisk($evaluation.getHealthRisk() + SymptomScores.dryCough);
+		$evaluation.setInfectionRisk($evaluation.getInfectionRisk() + 1);
+		update($evaluation)
+	end
+
+rule "Anamnesis tiredness"
+	lock-on-active
+	when
+		$anamnesis: Anamnesis(tiredness)
+		$evaluation: AnamnesisEvaluation()
+	then
+		$evaluation.setHealthRisk($evaluation.getHealthRisk() + SymptomScores.tiredness);
+		$evaluation.setInfectionRisk($evaluation.getInfectionRisk() + 1);
+		update($evaluation)
+	end
+
+rule "Anamnesis aches"
+	lock-on-active
+	when
+		$anamnesis: Anamnesis(aches)
+		$evaluation: AnamnesisEvaluation()
+	then
+		$evaluation.setHealthRisk($evaluation.getHealthRisk() + SymptomScores.aches);
+		$evaluation.setInfectionRisk($evaluation.getInfectionRisk() + 1);
+		update($evaluation)
+	end
+
+rule "Anamnesis soreThroat"
+	lock-on-active
+	when
+		$anamnesis: Anamnesis(soreThroat)
+		$evaluation: AnamnesisEvaluation()
+	then
+		$evaluation.setHealthRisk($evaluation.getHealthRisk() + SymptomScores.soreThroat);
+		$evaluation.setInfectionRisk($evaluation.getInfectionRisk() + 1);
+		update($evaluation)
+	end
+
+rule "Anamnesis diarrhoea"
+	lock-on-active
+	when
+		$anamnesis: Anamnesis(diarrhoea)
+		$evaluation: AnamnesisEvaluation()
+	then
+		$evaluation.setHealthRisk($evaluation.getHealthRisk() + SymptomScores.diarrhoea);
+		$evaluation.setInfectionRisk($evaluation.getInfectionRisk() + 1);
+		update($evaluation)
+	end
+
+rule "Anamnesis conjuctivits"
+	lock-on-active
+	when
+		$anamnesis: Anamnesis(conjuctivits)
+		$evaluation: AnamnesisEvaluation()
+	then
+		$evaluation.setHealthRisk($evaluation.getHealthRisk() + SymptomScores.conjuctivits);
+		$evaluation.setInfectionRisk($evaluation.getInfectionRisk() + 1);
+		update($evaluation)
+	end
+
+rule "Anamnesis headache"
+	lock-on-active
+	when
+		$anamnesis: Anamnesis(headache)
+		$evaluation: AnamnesisEvaluation()
+	then
+		$evaluation.setHealthRisk($evaluation.getHealthRisk() + SymptomScores.headache);
+		$evaluation.setInfectionRisk($evaluation.getInfectionRisk() + 1);
+		update($evaluation)
+	end
+
+rule "Anamnesis lossOfTasteOrSmell"
+	lock-on-active
+	when
+		$anamnesis: Anamnesis(lossOfTasteOrSmell)
+		$evaluation: AnamnesisEvaluation()
+	then
+		$evaluation.setHealthRisk($evaluation.getHealthRisk() + SymptomScores.lossOfTasteOrSmell);
+		$evaluation.setInfectionRisk($evaluation.getInfectionRisk() + 1);
+		update($evaluation)
+	end
+
+rule "Anamnesis rashDiscolouration"
+	lock-on-active
+	when
+		$anamnesis: Anamnesis(rashDiscolouration)
+		$evaluation: AnamnesisEvaluation()
+	then
+		$evaluation.setHealthRisk($evaluation.getHealthRisk() + SymptomScores.rashDiscolouration);
+		$evaluation.setInfectionRisk($evaluation.getInfectionRisk() + 1);
+		update($evaluation)
+	end
+
+rule "Anamnesis difficultyBreathing"
+	lock-on-active
+	when
+		$anamnesis: Anamnesis(difficultyBreathing)
+		$evaluation: AnamnesisEvaluation()
+	then
+		$evaluation.setHealthRisk($evaluation.getHealthRisk() + SymptomScores.difficultyBreathing);
+		$evaluation.setInfectionRisk($evaluation.getInfectionRisk() + 1);
+		update($evaluation)
+	end
+
+rule "Anamnesis chestPains"
+	lock-on-active
+	when
+		$anamnesis: Anamnesis(chestPains)
+		$evaluation: AnamnesisEvaluation()
+	then
+		$evaluation.setHealthRisk($evaluation.getHealthRisk() + SymptomScores.chestPains);
+		$evaluation.setInfectionRisk($evaluation.getInfectionRisk() + 1);
+		update($evaluation)
+	end
+
+rule "Anamnesis lossOfSpeachOrMovement"
+	lock-on-active
+	when
+		$anamnesis: Anamnesis(lossOfSpeachOrMovement)
+		$evaluation: AnamnesisEvaluation()
+	then
+		$evaluation.setHealthRisk($evaluation.getHealthRisk() + SymptomScores.lossOfSpeachOrMovement);
+		$evaluation.setInfectionRisk($evaluation.getInfectionRisk() + 1);
+		update($evaluation)
+	end
+
+rule "Anamnesis test"
+    no-loop
+    when
+        $evaluation: AnamnesisEvaluation(infectionRisk * infectionRiskMultiplier >= TestingStrategy.infectionRisk)
+        AnamnesisEvaluation(infectionRisk * infectionRiskMultiplier + healthRisk * healthRistMultiplier >= TestingStrategy.totalRisk)
+    then
+        $evaluation.setShouldTest(true);
+        update($evaluation)
+    end
+
+rule "Anamnesis recovery isolated"
+    when
+        $evaluation: AnamnesisEvaluation(shouldTest)
+        AnamnesisEvaluation(healthRisk * healthRistMultiplier < 10)
+    then
+        $evaluation.setRecoveryLocation(RecoveryLocation.IsolatedCare);
+    end
+
+rule "Anamnesis recovery hospital"
+    when
+        $evaluation: AnamnesisEvaluation(shouldTest)
+        AnamnesisEvaluation(healthRisk * healthRistMultiplier >= 10, healthRisk * healthRistMultiplier > 20)
+    then
+        $evaluation.setRecoveryLocation(RecoveryLocation.HospitalCare);
+    end
+
+rule "Anamnesis recovery intensive"
+    when
+        $evaluation: AnamnesisEvaluation(shouldTest)
+        AnamnesisEvaluation(healthRisk * healthRistMultiplier >= 50)
+    then
+        $evaluation.setRecoveryLocation(RecoveryLocation.IntensiveCare);
+    end
+
+
+
+
+
+
+
+
+
+

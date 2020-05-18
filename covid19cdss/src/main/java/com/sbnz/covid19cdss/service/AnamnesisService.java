@@ -1,33 +1,31 @@
 package com.sbnz.covid19cdss.service;
 
-import com.sbnz.covid19cdss.model.OnlineEvaluation;
-import com.sbnz.covid19cdss.model.OnlineForm;
-import com.sbnz.covid19cdss.model.OnlineInstruction;
+import com.sbnz.covid19cdss.model.*;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class OnlineFormService {
+public class AnamnesisService {
 
 
     private final KieContainer kieContainer;
 
     @Autowired
-    public OnlineFormService(KieContainer kieContainer) {
+    public AnamnesisService(KieContainer kieContainer) {
         this.kieContainer = kieContainer;
     }
 
-    public OnlineInstruction evaulateOnlineForm(OnlineForm form) {
-        OnlineEvaluation evaluation = new OnlineEvaluation();
-        evaluation.setInstruction(OnlineInstruction.StayHome);
+    public AnamnesisEvaluation evaluateAnamnesis(Anamnesis anamnesis) {
+        AnamnesisEvaluation evaluation = new AnamnesisEvaluation();
+        evaluation.setRecoveryLocation(RecoveryLocation.Home);
         KieSession kieSession = kieContainer.newKieSession("rulesSession");
 //        kieSession.getAgenda().getAgendaGroup("Online form").setFocus();
+        kieSession.insert(anamnesis);
         kieSession.insert(evaluation);
-        kieSession.insert(form);
         kieSession.fireAllRules();
         kieSession.dispose();
-        return evaluation.getInstruction();
+        return evaluation;
     }
 }
