@@ -5,7 +5,8 @@
     <v-spacer></v-spacer>
     <div class="mr-9">
       <v-btn color="#FFFFFF" class="mt-10 mr-2" to="/onlineHelp">Online Help</v-btn>
-      <v-btn color="#FFFFFF" class="mt-10 mr-2" to="/anamnesis">Anamnesis</v-btn>
+      <v-btn color="#FFFFFF" class="mt-10 mr-2" to="/anamnesis"> New Anamnesis</v-btn>
+      <v-btn color="#FFFFFF" class="mt-10 mr-2" to="/patients">Patients</v-btn>
     </div>
   </v-app-bar>
 

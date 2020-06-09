@@ -1,7 +1,9 @@
 package com.sbnz.covid19cdss.controller;
 
 import com.sbnz.covid19cdss.Utility.EnumerationUtility;
+import com.sbnz.covid19cdss.dto.AnamnesisDTO;
 import com.sbnz.covid19cdss.dto.MessageDto;
+import com.sbnz.covid19cdss.mapper.AnamnesisMapper;
 import com.sbnz.covid19cdss.model.Anamnesis;
 import com.sbnz.covid19cdss.model.AnamnesisEvaluation;
 import com.sbnz.covid19cdss.model.OnlineForm;
@@ -26,8 +28,8 @@ public class AnamnesisController {
 
     @RequestMapping(value="/evaluate", method = RequestMethod.POST,
             produces = "application/json", consumes = "application/json")
-    public ResponseEntity<AnamnesisEvaluation> evaluateOnlineForm(@RequestBody Anamnesis anamnesis) {
-        AnamnesisEvaluation evaluation = service.evaluateAnamnesis(anamnesis);
+    public ResponseEntity<AnamnesisEvaluation> evaluateOnlineForm(@RequestBody AnamnesisDTO anamnesis) {
+        AnamnesisEvaluation evaluation = service.evaluateAnamnesis(AnamnesisMapper.fromDTO(anamnesis, null));
         return new ResponseEntity<AnamnesisEvaluation>(evaluation, HttpStatus.OK);
     }
 }

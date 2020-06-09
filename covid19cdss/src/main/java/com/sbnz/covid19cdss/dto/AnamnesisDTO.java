@@ -1,92 +1,93 @@
-package com.sbnz.covid19cdss.model;
+package com.sbnz.covid19cdss.dto;
 
-import org.kie.api.definition.type.PropertyReactive;
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
-import javax.persistence.*;
+public class AnamnesisDTO {
 
-@Entity
-@Table(name = "anamnesis")
-public class Anamnesis {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     // personal info
-    @Column(name = "age")
     private int age;
-    @Column(name = "weight")
     private int weight;
-    @Column(name = "height")
     private int height;
-    @Column(name = "gender")
     private int gender;
-    @Column(name = "travelled")
     private boolean travelled;
-    @Column(name = "inContact")
     private boolean inContact;
     // common symptoms
-    @Column(name = "fever")
     private boolean fever;
-    @Column(name = "dryCough")
     private boolean dryCough;
-    @Column(name = "tiredness")
     private boolean tiredness;
     // uncommon symptoms
-    @Column(name = "aches")
     private boolean aches;
-    @Column(name = "soreThroat")
     private boolean soreThroat;
-    @Column(name = "diarrhoea")
     private boolean diarrhoea;
-    @Column(name = "conjuctivits")
     private boolean conjuctivits;
-    @Column(name = "headache")
     private boolean headache;
-    @Column(name = "lossOfTasteOrSmell")
     private boolean lossOfTasteOrSmell;
-    @Column(name = "rashDiscolouration")
     private boolean rashDiscolouration;
     // severe symptoms
-    @Column(name = "difficultyBreathing")
     private boolean difficultyBreathing;
-    @Column(name = "chestPains")
     private boolean chestPains;
-    @Column(name = "lossOfSpeachOrMovement")
     private boolean lossOfSpeachOrMovement;
     // underlying conditions
-    @Column(name = "asthma")
     private boolean asthma;
-    @Column(name = "chronicKidney")
     private boolean chronicKidney;
-    @Column(name = "chronicLung")
     private boolean chronicLung;
-    @Column(name = "diabetes")
     private boolean diabetes;
-    @Column(name = "hemoglobinDisorder")
     private boolean hemoglobinDisorder;
-    @Column(name = "immunocompromised")
     private boolean immunocompromised;
-    @Column(name = "liverDisease")
     private boolean liverDisease;
-    @Column(name = "heartConditions")
     private boolean heartConditions;
 
-
-
-    @Column(name = "riskGroup")
     private boolean riskGroup;
-    @Column(name = "obese")
     private boolean obese;
 
-
-    @OneToOne()
-    @JoinColumn(name = "patient")
-    private Patient patient;
-
-    public Anamnesis() {
+    public AnamnesisDTO() {
     }
 
+    public AnamnesisDTO(Long id, int age, int weight, int height, int gender, boolean travelled, boolean inContact, boolean fever, boolean dryCough, boolean tiredness, boolean aches, boolean soreThroat, boolean diarrhoea, boolean conjuctivits, boolean headache, boolean lossOfTasteOrSmell, boolean rashDiscolouration, boolean difficultyBreathing, boolean chestPains, boolean lossOfSpeachOrMovement, boolean asthma, boolean chronicKidney, boolean chronicLung, boolean diabetes, boolean hemoglobinDisorder, boolean immunocompromised, boolean liverDisease, boolean heartConditions, boolean riskGroup, boolean obese) {
+        this.id = id;
+        this.age = age;
+        this.weight = weight;
+        this.height = height;
+        this.gender = gender;
+        this.travelled = travelled;
+        this.inContact = inContact;
+        this.fever = fever;
+        this.dryCough = dryCough;
+        this.tiredness = tiredness;
+        this.aches = aches;
+        this.soreThroat = soreThroat;
+        this.diarrhoea = diarrhoea;
+        this.conjuctivits = conjuctivits;
+        this.headache = headache;
+        this.lossOfTasteOrSmell = lossOfTasteOrSmell;
+        this.rashDiscolouration = rashDiscolouration;
+        this.difficultyBreathing = difficultyBreathing;
+        this.chestPains = chestPains;
+        this.lossOfSpeachOrMovement = lossOfSpeachOrMovement;
+        this.asthma = asthma;
+        this.chronicKidney = chronicKidney;
+        this.chronicLung = chronicLung;
+        this.diabetes = diabetes;
+        this.hemoglobinDisorder = hemoglobinDisorder;
+        this.immunocompromised = immunocompromised;
+        this.liverDisease = liverDisease;
+        this.heartConditions = heartConditions;
+        this.riskGroup = riskGroup;
+        this.obese = obese;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public int getAge() {
         return age;
@@ -318,21 +319,5 @@ public class Anamnesis {
 
     public void setObese(boolean obese) {
         this.obese = obese;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Patient getPatient() {
-        return patient;
-    }
-
-    public void setPatient(Patient patient) {
-        this.patient = patient;
     }
 }

@@ -203,13 +203,36 @@
     <v-dialog v-model="dialog" max-width="500">
         <v-card>
           <v-card-text>
+            <h1>Recommendation</h1>
+            <br>
             <h2>Patient should{{ dialogTest ? '' : 'not '}} be tested</h2>
             <br>
-            <h2>Patiend should{{ dialogTestMessage }}</h2>
+            <h2>Patiend should{{ dialogLocationMessage }}</h2>
+            <v-row>
+              <v-col>
+                <v-text-field v-model="name" single-line outlined label="Name"></v-text-field>
+                
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col>
+                <v-text-field v-model="lastName" single-line outlined label="Last Name"></v-text-field>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col>
+                <v-select
+                  :items="recoveryLocations"
+                  label="Recovery Location"
+                ></v-select>
+              </v-col>
+            </v-row>
           </v-card-text>
           <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-brn text color="#FFFFFF" class="mt-10 mr-2" @click="dialog=false">Close</v-brn>
+            <v-row>
+              <v-btn text color="#AAAAAA" class="mt-10 mr-2" @click="submitPatientForm()">Admit Patient</v-btn>
+              <v-btn text color="#AAAAAA" class="mt-10 mr-2" @click="dialog=false">Close</v-btn>
+            </v-row>
           </v-card-actions>
         </v-card>
     </v-dialog>
@@ -217,7 +240,7 @@
 </template>
 
 <script lang="js">
-import { submitAnamnesis } from '../axiosService.js'
+import { submitAnamnesis, admitPatient } from '../axiosService.js'
 
   export default  {
     name: 'anamnesis-page',
@@ -262,6 +285,17 @@ import { submitAnamnesis } from '../axiosService.js'
         dialog: false,
         dialogTest: '',
         dialogLocationMessage: '',
+        
+        name: "",
+        lastName: "",
+        recoveryLocation: "Home",
+
+        recoveryLocations: [
+          "Home",
+          "IsolatedCare",
+          "HospitalCare",
+          "IntensiveCare",
+        ]
       }
     },
     methods: {
@@ -303,19 +337,61 @@ import { submitAnamnesis } from '../axiosService.js'
           this.dialogTest = response.data.shouldTest;
           switch(response.data.recoveryLocation) {
             case 'Home':
-              this.dialogTestMessage = 'be sent home';
+              this.dialogLocationMessage = ' be sent home';
               break;
             case 'IsolatedCare':
-              this.dialogTestMessage = 'be sent to isolated care';
+              this.dialogLocationMessage = ' be sent to isolated care';
               break;
             case 'HospitalCare':
-              this.dialogTestMessage = 'be sent to hospital care';
+              this.dialogLocationMessage = ' be sent to hospital care';
               break;
             case 'IntensiveCare':
-              this.dialogTestMessage = 'be sent to intesive care';
+              this.dialogLocationMessage = ' be sent to intesive care';
               break;
           }
           this.dialog = true;
+        })
+      },
+
+      submitPatientForm() {
+        admitPatient({
+          name: this.name,
+          lastName: this.lastName,
+          recoveryLocation: this.recoveryLocation,
+          anamneses: {
+            age: parseInt(this.age),
+            riskGroup: this.riskGroup,
+            travelled: this.travelled,
+            inContact: this.inContact,
+            height: this.height,
+            weight: this.weight,
+
+            fever: this.fever,
+            dryCough: this.dryCough,
+            tiredness: this.tiredness,
+
+            aches: this.aches,
+            soreThroat: this.soreThroat,
+            diarrhoea: this.diarrhoea,
+            conjuctivits: this.conjuctivits,
+            headache: this.headache,
+            lossOfTasteOrSmell: this.lossOfTasteOrSmell,
+            rashDiscolouration: this.rashDiscolouration,
+
+            difficultyBreathing: this.difficultyBreathing,
+            chestPains: this.chestPains,
+            lossOfSpeachOrMovement: this.lossOfSpeachOrMovement,
+
+            asthma: this.asthma,
+            chronicKidney: this.chronicKidney,
+            chronicLung: this.chronicLung,
+            diabetes: this.diabetes,
+            hemoglobinDisorder: this.hemoglobinDisorder,
+            immunocompromised: this.immunocompromised,
+            liverDisease: this.liverDisease,
+            heartConditions: this.heartConditions,
+          },
+          tests: []
         })
       }
 
