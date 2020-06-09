@@ -205,7 +205,7 @@
           <v-card-text>
             <h1>Recommendation</h1>
             <br>
-            <h2>Patient should{{ dialogTest ? '' : 'not '}} be tested</h2>
+            <h2>Patient should{{ dialogTest ? '' : ' not '}} be tested</h2>
             <br>
             <h2>Patiend should{{ dialogLocationMessage }}</h2>
             <v-row>

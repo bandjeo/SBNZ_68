@@ -5,6 +5,7 @@ const admitPatientUrl = "http://localhost:8080/patient";
 const getAllPatientsURL = "http://localhost:8080/patient";
 const getSinglePatientUTL = "http://localhost:8080/patient/";
 const submitTestURL = "http://localhost:8080/test/"
+const patientTestStatusURL = "http://localhost:8080/test/"
 
 export const submitOnlineForm = (data) => {
     return axios({
@@ -49,5 +50,12 @@ export const submitTest = (test, patientId) => {
         method: "post",
         data: test,
         url: submitTestURL + patientId
+    })
+}
+
+export const patientTestStatus = (patientId) => {
+    return axios({
+        method: "get",
+        url: patientTestStatusURL + patientId
     })
 }

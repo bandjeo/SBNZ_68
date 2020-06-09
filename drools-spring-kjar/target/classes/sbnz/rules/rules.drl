@@ -1,4 +1,4 @@
-package rules;
+package sbnz.rules;
 dialect  "mvel"
 
 import com.sbnz.covid19cdss.model.OnlineEvaluation
@@ -10,7 +10,6 @@ import com.sbnz.covid19cdss.model.Anamnesis
 import com.sbnz.covid19cdss.model.AnamnesisEvaluation
 import com.sbnz.covid19cdss.model.RecoveryLocation
 import com.sbnz.covid19cdss.model.TestingStrategy
-
 
 rule "Online form age"
     lock-on-active
@@ -268,6 +267,7 @@ rule "Anamnesis asthma"
     end
 
 rule "Anamnesis risk group"
+    lock-on-active
     when
         $anamnesis: Anamnesis(riskGroup)
         $evaluation: AnamnesisEvaluation()

@@ -22,8 +22,15 @@ public class TestController {
     }
 
     @RequestMapping(value="/{patientId}", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
-    public ResponseEntity<MessageDto> addTest(@RequestBody TestDTO dto, @PathVariable Long patientId) {
+    public ResponseEntity<Boolean> addTest(@RequestBody TestDTO dto, @PathVariable Long patientId) {
         this.service.add(TestMapper.fromDTO(dto), patientId);
-        return new ResponseEntity<>(new MessageDto("success"), HttpStatus.OK);
+        boolean discharge = this.service.resonateTests(patientId);
+        return new ResponseEntity<>(discharge, HttpStatus.OK);
+    }
+
+    @RequestMapping(value="/{patientId}", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity<Boolean> resonateTests(@PathVariable Long patientId) {
+        boolean discharge = this.service.resonateTests(patientId);
+        return new ResponseEntity<>(discharge, HttpStatus.OK);
     }
 }

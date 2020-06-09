@@ -1,0 +1,38 @@
+package sbnz.cep_rules;
+dialect  "mvel"
+
+import com.sbnz.covid19cdss.model.Test
+import com.sbnz.covid19cdss.model.TestsReview
+import java.util.List
+
+
+declare Test
+    @role(event)
+    @timestamp(timestamp)
+end
+
+
+rule "Only one negative test"
+    when
+        $list: List(size == 1) from collect(Test())
+        Test(result == false)
+        $tr: TestsReview()
+    then
+        $tr.setDischarge(true);
+end
+
+rule "Last test negative"
+    when
+        accumulate(Test($timestamp: timestamp, result == false),
+                    $latestNegative: max($timestamp))
+        $latestNegativeTest: Test(timestamp == $latestNegative)
+        not(exists(Test(result == true, this after $latestNegativeTest)))
+        exists(Test(this before[20s] $latestNegativeTest, result == false))
+        accumulate(Test($timestamp: timestamp, result == false, this before[20s] $latestNegativeTest),
+                            $otherNegative: max($timestamp))
+        $otherNegativeTest: Test(timestamp == $otherNegative)
+        not(exists(Test(result == true, this after $otherNegativeTest)))
+        $tr: TestsReview()
+    then
+        $tr.setDischarge(true);
+end

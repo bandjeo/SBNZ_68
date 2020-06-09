@@ -237,9 +237,14 @@
     </v-expansion-panels>
     </v-row>
 
+    <v-row>
+      <h2>Patient is {{testStatus ? '' : 'not '}} ready to be discharged</h2>
+    </v-row>
+    
     <v-row justify="center">
       <v-btn color="#FFFFFF" class="mt-10 mr-2" @click="testDialog = true">Add test result</v-btn>
     </v-row>
+
 
     </div>
 
@@ -262,7 +267,7 @@
 </template>
 
 <script lang="js">
-  import { getSinglePatient, submitTest } from '../axiosService.js'
+  import { getSinglePatient, submitTest, patientTestStatus } from '../axiosService.js'
 
   export default  {
     name: 'single-patient-page',
@@ -272,6 +277,8 @@
     },
     data () {
       return {
+        testStatus: false,
+
         testDialog: false,
         testHeaders: [
           {
@@ -336,8 +343,16 @@
       },
 
       addTestResult(result) {
-        submitTest({result, timestamp: new Date()}, this.$route.params.id).then(() => {
+        submitTest({result, timestamp: new Date()}, this.$route.params.id).then((result) => {
           this.loadPatient()
+          console.log(result);
+          this.testStatus = result.data
+        })
+      },
+
+      getPatientTestStatus() {
+        patientTestStatus(this.$route.params.id).then(data => {
+          this.testStatus = data.data;
         })
       }
     },
