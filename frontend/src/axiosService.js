@@ -6,6 +6,7 @@ const getAllPatientsURL = "http://localhost:8080/patient";
 const getSinglePatientUTL = "http://localhost:8080/patient/";
 const submitTestURL = "http://localhost:8080/test/"
 const patientTestStatusURL = "http://localhost:8080/test/"
+const rulesURL = "http://localhost:8080/rules"
 
 export const submitOnlineForm = (data) => {
     return axios({
@@ -57,5 +58,20 @@ export const patientTestStatus = (patientId) => {
     return axios({
         method: "get",
         url: patientTestStatusURL + patientId
+    })
+}
+
+export const getRules = () => {
+    return axios({
+        method: "get",
+        url: rulesURL
+    })
+}
+
+export const postRules = (data) => {
+    return axios({
+        method: "post",
+        url: rulesURL,
+        data: { message: data }
     })
 }

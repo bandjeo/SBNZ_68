@@ -3,6 +3,7 @@ import OnlineHelpPage from './components/OnlineHelpPage.vue'
 import OnlineInstructionPage from './components/OnlineInstructionPage.vue'
 import PatientsPage from './components/PatientsPage.vue'
 import singlePatientPage from './components/singlePatientPage.vue'
+import rulesPage from './components/rulesPage.vue'
 
 const routes = [
     {
@@ -29,6 +30,12 @@ const routes = [
       name: "patient",
       path: "/patient/:id",
       component: singlePatientPage,
+
+    },
+    {
+      name: "rules",
+      path: "/rules",
+      component: rulesPage,
 
     },
     { path: "/", redirect: "/onlineHelp" }

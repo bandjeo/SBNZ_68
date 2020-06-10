@@ -324,7 +324,7 @@ rule "Anamnesis dryCough"
 		$evaluation: AnamnesisEvaluation()
 	then
 		$evaluation.setHealthRisk($evaluation.getHealthRisk() + SymptomScores.dryCough);
-		$evaluation.setInfectionRisk($evaluation.getInfectionRisk() + 50);
+		$evaluation.setInfectionRisk($evaluation.getInfectionRisk() + 1);
 		update($evaluation)
 	end
 

@@ -7,6 +7,7 @@
       <v-btn color="#FFFFFF" class="mt-10 mr-2" to="/onlineHelp">Online Help</v-btn>
       <v-btn color="#FFFFFF" class="mt-10 mr-2" to="/anamnesis"> New Anamnesis</v-btn>
       <v-btn color="#FFFFFF" class="mt-10 mr-2" to="/patients">Patients</v-btn>
+      <v-btn color="#FFFFFF" class="mt-10 mr-2" to="/rules">Rules</v-btn>
     </div>
   </v-app-bar>
 
