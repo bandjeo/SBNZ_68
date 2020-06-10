@@ -324,7 +324,7 @@ rule "Anamnesis dryCough"
 		$evaluation: AnamnesisEvaluation()
 	then
 		$evaluation.setHealthRisk($evaluation.getHealthRisk() + SymptomScores.dryCough);
-		$evaluation.setInfectionRisk($evaluation.getInfectionRisk() + 50);
+		$evaluation.setInfectionRisk($evaluation.getInfectionRisk() + 1);
 		update($evaluation)
 	end
 
@@ -470,7 +470,7 @@ rule "Anamnesis recovery isolated"
 rule "Anamnesis recovery hospital"
     when
         $evaluation: AnamnesisEvaluation(shouldTest)
-        AnamnesisEvaluation(healthRisk * healthRistMultiplier >= 10, healthRisk * healthRistMultiplier > 20)
+        AnamnesisEvaluation(healthRisk * healthRistMultiplier >= 10, healthRisk * healthRistMultiplier < 50)
     then
         $evaluation.setRecoveryLocation(RecoveryLocation.HospitalCare);
     end
