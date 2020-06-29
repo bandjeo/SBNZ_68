@@ -1,0 +1,66 @@
+package sbnz.online_form_rules;
+dialect  "mvel"
+
+import com.sbnz.covid19cdss.model.OnlineEvaluation
+import com.sbnz.covid19cdss.model.OnlineForm
+import com.sbnz.covid19cdss.Utility.DebugHelper
+import com.sbnz.covid19cdss.model.SymptomScores
+import com.sbnz.covid19cdss.model.OnlineInstruction
+import com.sbnz.covid19cdss.model.Symptom
+
+
+rule "Online form age"
+    lock-on-active
+    when
+        $evaluation: OnlineEvaluation()
+        OnlineEvaluation(DebugHelper.debugLhsValue($evaluation) == true) from $evaluation
+        $form: OnlineForm(age > 60)
+        OnlineEvaluation(DebugHelper.debugLhsValue($form) == true) from $evaluation
+
+    then
+        $evaluation.setScoreMultiplier($evaluation.getScoreMultiplier() * (2 + ($form.getAge()-60)/10.0));
+        update($evaluation)
+    end
+
+rule "Online form riskGroup"
+    lock-on-active
+    when
+        $evaluation: OnlineEvaluation()
+        $form: OnlineForm(riskGroup)
+    then
+        $evaluation.setScoreMultiplier($evaluation.getScoreMultiplier() * 2);
+        update($evaluation)
+    end
+
+rule "Online form score"
+    lock-on-active
+    when
+        $evaluation: OnlineEvaluation()
+        $score: Number() from accumulate(
+            Symptom(value == true, $s: score),
+            sum($s) )
+    then
+        $evaluation.setScore($score.doubleValue());
+        update($evaluation)
+    end
+
+rule "Score online evaluation go to health center"
+    when
+        $evaluation: OnlineEvaluation(score * scoreMultiplier >= 10, score * scoreMultiplier < 20)
+    then
+        $evaluation.setInstruction(OnlineInstruction.VisitHealthCenter);
+    end
+
+rule "Score online evaluation go hospital"
+    when
+        $evaluation: OnlineEvaluation(score * scoreMultiplier >= 20, score * scoreMultiplier < 50)
+    then
+        $evaluation.setInstruction(OnlineInstruction.VisitHospital);
+    end
+
+rule "Score online evaluation go to emergancy hospital"
+    when
+        $evaluation: OnlineEvaluation(score * scoreMultiplier >= 50)
+    then
+        $evaluation.setInstruction(OnlineInstruction.GoToEmergencyHospital);
+    end

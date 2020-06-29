@@ -10,4 +10,12 @@
 		<ksession name="cep_rulesSession" />
 	</kbase>
 
+	<kbase name="online_form_rules" packages="sbnz.online_form_rules">
+		<ksession name="online_form_rulesSession" />
+	</kbase>
+
+	<kbase name="anamnesis_rules" packages="sbnz.anamnesis_rules">
+		<ksession name="anamnesis_rulesSession" />
+	</kbase>
+
 </kmodule>

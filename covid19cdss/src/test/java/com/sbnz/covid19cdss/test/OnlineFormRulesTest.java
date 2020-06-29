@@ -3,6 +3,7 @@ package com.sbnz.covid19cdss.test;
 import com.sbnz.covid19cdss.model.OnlineEvaluation;
 import com.sbnz.covid19cdss.model.OnlineForm;
 import com.sbnz.covid19cdss.model.OnlineInstruction;
+import com.sbnz.covid19cdss.service.OnlineFormService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.api.KieServices;
@@ -20,6 +21,9 @@ import static org.junit.Assert.assertEquals;
 public class OnlineFormRulesTest {
 
     private KieContainer kieContainer;
+
+    @Autowired
+    private OnlineFormService service;
 
     public OnlineFormRulesTest() {
         KieServices ks = KieServices.Factory.get();
@@ -51,14 +55,7 @@ public class OnlineFormRulesTest {
         form.setChestPains(false);
         form.setLossOfSpeachOrMovement(false);
 
-        OnlineEvaluation evaluation = new OnlineEvaluation();
-        evaluation.setInstruction(OnlineInstruction.StayHome);
-        KieSession kieSession = kieContainer.newKieSession("rulesSession");
-//        kieSession.getAgenda().getAgendaGroup("Online form").setFocus();
-        kieSession.insert(evaluation);
-        kieSession.insert(form);
-        kieSession.fireAllRules();
-        kieSession.dispose();
+        OnlineEvaluation evaluation = service.evaulateOnlineForm(form);
 
         assertEquals(evaluation.getInstruction(), OnlineInstruction.StayHome);
         assertEquals(evaluation.getScore(), 0, 0.1);
@@ -86,14 +83,7 @@ public class OnlineFormRulesTest {
         form.setChestPains(false);
         form.setLossOfSpeachOrMovement(false);
 
-        OnlineEvaluation evaluation = new OnlineEvaluation();
-        evaluation.setInstruction(OnlineInstruction.StayHome);
-        KieSession kieSession = kieContainer.newKieSession("rulesSession");
-//        kieSession.getAgenda().getAgendaGroup("Online form").setFocus();
-        kieSession.insert(evaluation);
-        kieSession.insert(form);
-        kieSession.fireAllRules();
-        kieSession.dispose();
+        OnlineEvaluation evaluation = service.evaulateOnlineForm(form);
 
         assertEquals(evaluation.getInstruction(), OnlineInstruction.VisitHealthCenter);
         assertEquals(evaluation.getScore(), 7, 0.1);
@@ -121,14 +111,7 @@ public class OnlineFormRulesTest {
         form.setChestPains(false);
         form.setLossOfSpeachOrMovement(false);
 
-        OnlineEvaluation evaluation = new OnlineEvaluation();
-        evaluation.setInstruction(OnlineInstruction.StayHome);
-        KieSession kieSession = kieContainer.newKieSession("rulesSession");
-//        kieSession.getAgenda().getAgendaGroup("Online form").setFocus();
-        kieSession.insert(evaluation);
-        kieSession.insert(form);
-        kieSession.fireAllRules();
-        kieSession.dispose();
+        OnlineEvaluation evaluation = service.evaulateOnlineForm(form);
 
         assertEquals(evaluation.getInstruction(), OnlineInstruction.VisitHospital);
         assertEquals(evaluation.getScore(), 6, 0.1);
@@ -156,14 +139,7 @@ public class OnlineFormRulesTest {
         form.setChestPains(false);
         form.setLossOfSpeachOrMovement(false);
 
-        OnlineEvaluation evaluation = new OnlineEvaluation();
-        evaluation.setInstruction(OnlineInstruction.StayHome);
-        KieSession kieSession = kieContainer.newKieSession("rulesSession");
-//        kieSession.getAgenda().getAgendaGroup("Online form").setFocus();
-        kieSession.insert(evaluation);
-        kieSession.insert(form);
-        kieSession.fireAllRules();
-        kieSession.dispose();
+        OnlineEvaluation evaluation = service.evaulateOnlineForm(form);
 
         assertEquals(evaluation.getInstruction(), OnlineInstruction.GoToEmergencyHospital);
         assertEquals(evaluation.getScore(), 51, 0.1);

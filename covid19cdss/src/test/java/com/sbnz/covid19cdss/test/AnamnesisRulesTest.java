@@ -3,12 +3,14 @@ package com.sbnz.covid19cdss.test;
 import com.sbnz.covid19cdss.model.Anamnesis;
 import com.sbnz.covid19cdss.model.AnamnesisEvaluation;
 import com.sbnz.covid19cdss.model.RecoveryLocation;
+import com.sbnz.covid19cdss.service.AnamnesisService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.api.KieServices;
 import org.kie.api.builder.KieScanner;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -17,6 +19,9 @@ import static org.junit.Assert.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class AnamnesisRulesTest {
+
+    @Autowired
+    private AnamnesisService service;
 
     private KieContainer kieContainer;
 
@@ -60,13 +65,7 @@ public class AnamnesisRulesTest {
         anamnesis.setLiverDisease(false);
         anamnesis.setHeartConditions(false);
 
-        AnamnesisEvaluation evaluation = new AnamnesisEvaluation();
-        evaluation.setRecoveryLocation(RecoveryLocation.Home);
-        KieSession kieSession = kieContainer.newKieSession("rulesSession");
-        kieSession.insert(anamnesis);
-        kieSession.insert(evaluation);
-        kieSession.fireAllRules();
-        kieSession.dispose();
+        AnamnesisEvaluation evaluation = service.evaluateAnamnesis(anamnesis);
 
         assertFalse(evaluation.isShouldTest());
         assertEquals(evaluation.getHealthRisk(), 0, 0.1);
@@ -107,13 +106,7 @@ public class AnamnesisRulesTest {
         anamnesis.setLiverDisease(false);
         anamnesis.setHeartConditions(false);
 
-        AnamnesisEvaluation evaluation = new AnamnesisEvaluation();
-        evaluation.setRecoveryLocation(RecoveryLocation.Home);
-        KieSession kieSession = kieContainer.newKieSession("rulesSession");
-        kieSession.insert(anamnesis);
-        kieSession.insert(evaluation);
-        kieSession.fireAllRules();
-        kieSession.dispose();
+        AnamnesisEvaluation evaluation = service.evaluateAnamnesis(anamnesis);
 
         assertTrue(evaluation.isShouldTest());
         assertEquals(evaluation.getHealthRisk(), 4, 0.1);
@@ -153,13 +146,7 @@ public class AnamnesisRulesTest {
         anamnesis.setLiverDisease(false);
         anamnesis.setHeartConditions(false);
 
-        AnamnesisEvaluation evaluation = new AnamnesisEvaluation();
-        evaluation.setRecoveryLocation(RecoveryLocation.Home);
-        KieSession kieSession = kieContainer.newKieSession("rulesSession");
-        kieSession.insert(anamnesis);
-        kieSession.insert(evaluation);
-        kieSession.fireAllRules();
-        kieSession.dispose();
+        AnamnesisEvaluation evaluation = service.evaluateAnamnesis(anamnesis);
 
         assertEquals(evaluation.getRecoveryLocation(), RecoveryLocation.Home);
         assertEquals(evaluation.getHealthRisk(), 0, 0.1);
@@ -199,13 +186,7 @@ public class AnamnesisRulesTest {
         anamnesis.setLiverDisease(false);
         anamnesis.setHeartConditions(false);
 
-        AnamnesisEvaluation evaluation = new AnamnesisEvaluation();
-        evaluation.setRecoveryLocation(RecoveryLocation.Home);
-        KieSession kieSession = kieContainer.newKieSession("rulesSession");
-        kieSession.insert(anamnesis);
-        kieSession.insert(evaluation);
-        kieSession.fireAllRules();
-        kieSession.dispose();
+        AnamnesisEvaluation evaluation = service.evaluateAnamnesis(anamnesis);
 
         assertEquals(evaluation.getRecoveryLocation(), RecoveryLocation.IsolatedCare);
         assertEquals(evaluation.getHealthRisk(), 4, 0.1);
@@ -245,13 +226,7 @@ public class AnamnesisRulesTest {
         anamnesis.setLiverDisease(false);
         anamnesis.setHeartConditions(false);
 
-        AnamnesisEvaluation evaluation = new AnamnesisEvaluation();
-        evaluation.setRecoveryLocation(RecoveryLocation.Home);
-        KieSession kieSession = kieContainer.newKieSession("rulesSession");
-        kieSession.insert(anamnesis);
-        kieSession.insert(evaluation);
-        kieSession.fireAllRules();
-        kieSession.dispose();
+        AnamnesisEvaluation evaluation = service.evaluateAnamnesis(anamnesis);
 
         assertEquals(evaluation.getRecoveryLocation(), RecoveryLocation.HospitalCare);
         assertEquals(evaluation.getHealthRisk(), 6, 0.1);
@@ -291,13 +266,7 @@ public class AnamnesisRulesTest {
         anamnesis.setLiverDisease(false);
         anamnesis.setHeartConditions(false);
 
-        AnamnesisEvaluation evaluation = new AnamnesisEvaluation();
-        evaluation.setRecoveryLocation(RecoveryLocation.Home);
-        KieSession kieSession = kieContainer.newKieSession("rulesSession");
-        kieSession.insert(anamnesis);
-        kieSession.insert(evaluation);
-        kieSession.fireAllRules();
-        kieSession.dispose();
+        AnamnesisEvaluation evaluation = service.evaluateAnamnesis(anamnesis);
 
         assertEquals(evaluation.getRecoveryLocation(), RecoveryLocation.IntensiveCare);
         assertEquals(evaluation.getHealthRisk(), 55, 0.1);

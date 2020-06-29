@@ -1,0 +1,163 @@
+package sbnz.anamnesis_rules;
+dialect  "mvel"
+
+import com.sbnz.covid19cdss.model.Anamnesis
+import com.sbnz.covid19cdss.model.AnamnesisEvaluation
+import com.sbnz.covid19cdss.model.RecoveryLocation
+import com.sbnz.covid19cdss.model.TestingStrategy
+import com.sbnz.covid19cdss.model.SymptomScores
+import com.sbnz.covid19cdss.Utility.DebugHelper
+import com.sbnz.covid19cdss.model.Symptom
+import com.sbnz.covid19cdss.model.SymptomType
+import java.util.List
+
+rule "Anamnesis check risk group"
+    lock-on-active
+    when
+        $anamnesis: Anamnesis()
+        exists(Symptom(type==SymptomType.RiskGroup, value == true))
+    then
+        $anamnesis.setRiskGroup(true);
+        DebugHelper.debugLhsValue("Anamnesis check risk group");
+        update($anamnesis)
+    end
+
+rule "Anamnesis set risk group"
+    lock-on-active
+    when
+        $anamnesis: Anamnesis(riskGroup)
+        $evaluation: AnamnesisEvaluation()
+    then
+        $evaluation.setHealthRistMultiplier($evaluation.getHealthRistMultiplier() * 2);
+        DebugHelper.debugLhsValue("Anamnesis set risk group");
+        update($evaluation)
+    end
+
+rule "Anamnesis age"
+    lock-on-active
+    when
+        $anamnesis: Anamnesis(age > 60)
+        $evaluation: AnamnesisEvaluation()
+    then
+        $evaluation.setHealthRistMultiplier($evaluation.getHealthRistMultiplier() * (2 + ($anamnesis.getAge()-60)/10.0));
+        DebugHelper.debugLhsValue("Anamnesis age");
+        update($evaluation)
+    end
+
+rule "Anamnesis travelled"
+    lock-on-active
+    when
+        $anamnesis: Anamnesis(travelled)
+        $evaluation: AnamnesisEvaluation()
+    then
+        $evaluation.setInfectionRiskMultiplier($evaluation.getInfectionRiskMultiplier() * 2);
+        DebugHelper.debugLhsValue("Anamnesis travelled");
+        update($evaluation)
+    end
+
+rule "Anamnesis in contact"
+    lock-on-active
+    when
+        $anamnesis: Anamnesis(inContact)
+        $evaluation: AnamnesisEvaluation()
+    then
+        $evaluation.setInfectionRiskMultiplier($evaluation.getInfectionRiskMultiplier() * 2);
+        DebugHelper.debugLhsValue("Anamnesis in contact");
+        update($evaluation)
+    end
+
+rule "Anamnesis health risk"
+    lock-on-active
+    when
+        $evaluation: AnamnesisEvaluation()
+        $score: Number() from accumulate(
+            Symptom(type == SymptomType.Normal, value == true, $s: score),
+            sum($s) )
+    then
+        $evaluation.setHealthRisk($score.doubleValue());
+        DebugHelper.debugLhsValue("Anamnesis health risk");
+        update($evaluation)
+    end
+
+rule "Anamnesis infection risk"
+    lock-on-active
+    when
+        $evaluation: AnamnesisEvaluation()
+        $list: List() from accumulate(
+            Symptom(type == SymptomType.Normal, value == true, $s: this),
+            collectList($s) )
+    then
+        $evaluation.setInfectionRisk($list.size());
+        DebugHelper.debugLhsValue("Anamnesis infection risk");
+        update($evaluation)
+    end
+
+
+rule "Anamnesis test"
+    no-loop
+    when
+        $evaluation: AnamnesisEvaluation(infectionRisk * infectionRiskMultiplier >= TestingStrategy.infectionRisk)
+        AnamnesisEvaluation(infectionRisk * infectionRiskMultiplier + healthRisk * healthRistMultiplier >= TestingStrategy.totalRisk)
+    then
+        $evaluation.setShouldTest(true);
+        DebugHelper.debugLhsValue("Anamnesis test");
+        update($evaluation)
+    end
+
+//rule "Anamnesis recovery isolated"
+////    salience ($evaluation.getHealthRisk() * $evaluation.getHealthRistMultiplier()) < 10 ? -1 : 0
+//    salience ((($hr * $hrm) < 10) ? -1 : 0)
+//    when
+//        $evaluation: AnamnesisEvaluation(shouldTest, $hr: healthRisk, $hrm: healthRistMultiplier)
+////        AnamnesisEvaluation(healthRisk * healthRistMultiplier < 10)
+//    then
+//        $evaluation.setRecoveryLocation(RecoveryLocation.IntensiveCare);
+//    end
+//
+//rule "Anamnesis recovery hospital"
+//    salience ((($hr * $hrm) >= 10 && ($hr * $hrm)) < 50 ? -1 : 0)
+//    when
+//        $evaluation: AnamnesisEvaluation(shouldTest, $hr: healthRisk, $hrm: healthRistMultiplier)
+//
+////        AnamnesisEvaluation(healthRisk * healthRistMultiplier >= 10, healthRisk * healthRistMultiplier < 50)
+//    then
+//        $evaluation.setRecoveryLocation(RecoveryLocation.IntensiveCare);
+//    end
+//
+//rule "Anamnesis recovery intensive"
+//    salience ((($hr * $hrm) >= 50) ? -1 : 0)
+//    when
+//        $evaluation: AnamnesisEvaluation(shouldTest, $hr: healthRisk, $hrm: healthRistMultiplier)
+////        AnamnesisEvaluation(healthRisk * healthRistMultiplier >= 50)
+//    then
+//        $evaluation.setRecoveryLocation(RecoveryLocation.IntensiveCare);
+//    end
+
+rule "Anamnesis recovery isolated"
+    when
+        $evaluation: AnamnesisEvaluation(shouldTest)
+        AnamnesisEvaluation(healthRisk * healthRistMultiplier < 10)
+    then
+        $evaluation.setRecoveryLocation(RecoveryLocation.IsolatedCare);
+        DebugHelper.debugLhsValue("Anamnesis recovery isolated");
+    end
+
+rule "Anamnesis recovery hospital"
+    when
+        $evaluation: AnamnesisEvaluation(shouldTest)
+        AnamnesisEvaluation(healthRisk * healthRistMultiplier >= 10, healthRisk * healthRistMultiplier < 50)
+    then
+        $evaluation.setRecoveryLocation(RecoveryLocation.HospitalCare);
+        DebugHelper.debugLhsValue("Anamnesis recovery hospital");
+    end
+
+rule "Anamnesis recovery intensive"
+    when
+        $evaluation: AnamnesisEvaluation(shouldTest)
+        AnamnesisEvaluation(healthRisk * healthRistMultiplier >= 50)
+    then
+        $evaluation.setRecoveryLocation(RecoveryLocation.IntensiveCare);
+        DebugHelper.debugLhsValue("Anamnesis recovery intensive");
+    end
+
+

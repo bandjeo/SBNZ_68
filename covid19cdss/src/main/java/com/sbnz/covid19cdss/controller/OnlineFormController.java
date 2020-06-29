@@ -2,6 +2,7 @@ package com.sbnz.covid19cdss.controller;
 
 import com.sbnz.covid19cdss.Utility.EnumerationUtility;
 import com.sbnz.covid19cdss.dto.MessageDto;
+import com.sbnz.covid19cdss.model.OnlineEvaluation;
 import com.sbnz.covid19cdss.model.OnlineForm;
 import com.sbnz.covid19cdss.model.OnlineInstruction;
 import com.sbnz.covid19cdss.service.OnlineFormService;
@@ -25,7 +26,7 @@ public class OnlineFormController {
     @RequestMapping(value="/evaluate", method = RequestMethod.POST,
             produces = "application/json", consumes = "application/json")
     public ResponseEntity<OnlineInstruction> evaluateOnlineForm(@RequestBody OnlineForm onlineForm) {
-        OnlineInstruction instruction = service.evaulateOnlineForm(onlineForm);
-        return new ResponseEntity<OnlineInstruction>(instruction, HttpStatus.OK);
+        OnlineEvaluation evaluation = service.evaulateOnlineForm(onlineForm);
+        return new ResponseEntity<OnlineInstruction>(evaluation.getInstruction(), HttpStatus.OK);
     }
 }
