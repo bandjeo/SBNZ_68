@@ -12,7 +12,7 @@ import java.util.Arrays;
 @Service
 public class RulesService {
 
-    private static final String drlPath = System.getProperty("user.dir") + "\\..\\drools-spring-kjar\\src\\main\\resources\\sbnz\\rules\\rules.drl";
+    private static final String drlPath = System.getProperty("user.dir") + "\\..\\drools-spring-kjar\\src\\main\\resources\\sbnz\\";
     private Environment env;
 
     @Autowired
@@ -20,8 +20,8 @@ public class RulesService {
         this.env = env;
     }
 
-    public String getDrl() throws IOException {
-        File file = new File(drlPath);
+    public String getDrl(String fileName) throws IOException {
+        File file = new File(drlPath + fileName + "\\" + fileName + ".drl");
         FileInputStream fis = new FileInputStream(file);
         byte[] data = new byte[(int) file.length()];
         fis.read(data);
@@ -31,8 +31,8 @@ public class RulesService {
         return str;
     }
 
-    public void setDrl(String text) throws FileNotFoundException {
-        PrintWriter out = new PrintWriter(drlPath);
+    public void setDrl(String text, String fileName) throws FileNotFoundException {
+        PrintWriter out = new PrintWriter(drlPath + fileName + "\\" + fileName + ".drl");
         out.print(text);
         out.close();
         invokeCleanInstallKjar();

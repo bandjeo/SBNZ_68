@@ -36,6 +36,9 @@ public class AnamnesisEvaluation {
     public void setInfectionRisk(double infectionRisk) {
         this.infectionRisk = infectionRisk;
     }
+    public void setInfectionRisk(int infectionRisk) {
+        this.infectionRisk = infectionRisk;
+    }
 
     public boolean isShouldTest() {
         return shouldTest;

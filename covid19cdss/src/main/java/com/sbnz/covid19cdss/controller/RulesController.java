@@ -24,10 +24,10 @@ public class RulesController {
         this.service = service;
     }
 
-    @RequestMapping(value="", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
-    public ResponseEntity<MessageDto> set(@RequestBody MessageDto messageDto) {
+    @RequestMapping(value="/{fileName}", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+    public ResponseEntity<MessageDto> set(@RequestBody MessageDto messageDto, @PathVariable String fileName) {
         try {
-            this.service.setDrl(messageDto.getMessage());
+            this.service.setDrl(messageDto.getMessage(), fileName);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             return new ResponseEntity<>(new MessageDto("could not read drlFile"), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -35,12 +35,12 @@ public class RulesController {
         return new ResponseEntity<>(new MessageDto("success"), HttpStatus.OK);
     }
 
-    @RequestMapping(value="", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<String> get() {
+    @RequestMapping(value="/{fileName}", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity<String> get(@PathVariable String fileName) {
 
         String rulesText = null;
         try {
-            rulesText = service.getDrl();
+            rulesText = service.getDrl(fileName);
         } catch (IOException e) {
             e.printStackTrace();
             return new ResponseEntity<>("could not read file", HttpStatus.INTERNAL_SERVER_ERROR);

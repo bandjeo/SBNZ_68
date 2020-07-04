@@ -104,60 +104,28 @@ rule "Anamnesis test"
         update($evaluation)
     end
 
-//rule "Anamnesis recovery isolated"
-////    salience ($evaluation.getHealthRisk() * $evaluation.getHealthRistMultiplier()) < 10 ? -1 : 0
-//    salience ((($hr * $hrm) < 10) ? -1 : 0)
-//    when
-//        $evaluation: AnamnesisEvaluation(shouldTest, $hr: healthRisk, $hrm: healthRistMultiplier)
-////        AnamnesisEvaluation(healthRisk * healthRistMultiplier < 10)
-//    then
-//        $evaluation.setRecoveryLocation(RecoveryLocation.IntensiveCare);
-//    end
-//
-//rule "Anamnesis recovery hospital"
-//    salience ((($hr * $hrm) >= 10 && ($hr * $hrm)) < 50 ? -1 : 0)
-//    when
-//        $evaluation: AnamnesisEvaluation(shouldTest, $hr: healthRisk, $hrm: healthRistMultiplier)
-//
-////        AnamnesisEvaluation(healthRisk * healthRistMultiplier >= 10, healthRisk * healthRistMultiplier < 50)
-//    then
-//        $evaluation.setRecoveryLocation(RecoveryLocation.IntensiveCare);
-//    end
-//
-//rule "Anamnesis recovery intensive"
-//    salience ((($hr * $hrm) >= 50) ? -1 : 0)
-//    when
-//        $evaluation: AnamnesisEvaluation(shouldTest, $hr: healthRisk, $hrm: healthRistMultiplier)
-////        AnamnesisEvaluation(healthRisk * healthRistMultiplier >= 50)
-//    then
-//        $evaluation.setRecoveryLocation(RecoveryLocation.IntensiveCare);
-//    end
-
 rule "Anamnesis recovery isolated"
+    salience ((($hr * $hrm) < 10) ? -1 : 0)
     when
-        $evaluation: AnamnesisEvaluation(shouldTest)
-        AnamnesisEvaluation(healthRisk * healthRistMultiplier < 10)
+        $evaluation: AnamnesisEvaluation(shouldTest, $hr: healthRisk, $hrm: healthRistMultiplier)
     then
         $evaluation.setRecoveryLocation(RecoveryLocation.IsolatedCare);
-        DebugHelper.debugLhsValue("Anamnesis recovery isolated");
     end
 
 rule "Anamnesis recovery hospital"
+    salience ((($hr * $hrm) >= 10 && ($hr * $hrm) < 50) ? -1 : 0)
     when
-        $evaluation: AnamnesisEvaluation(shouldTest)
-        AnamnesisEvaluation(healthRisk * healthRistMultiplier >= 10, healthRisk * healthRistMultiplier < 50)
+        $evaluation: AnamnesisEvaluation(shouldTest, $hr: healthRisk, $hrm: healthRistMultiplier)
     then
         $evaluation.setRecoveryLocation(RecoveryLocation.HospitalCare);
-        DebugHelper.debugLhsValue("Anamnesis recovery hospital");
     end
 
 rule "Anamnesis recovery intensive"
+    salience ((($hr * $hrm) >= 50) ? -1 : 0)
     when
-        $evaluation: AnamnesisEvaluation(shouldTest)
-        AnamnesisEvaluation(healthRisk * healthRistMultiplier >= 50)
+        $evaluation: AnamnesisEvaluation(shouldTest, $hr: healthRisk, $hrm: healthRistMultiplier)
     then
         $evaluation.setRecoveryLocation(RecoveryLocation.IntensiveCare);
-        DebugHelper.debugLhsValue("Anamnesis recovery intensive");
     end
 
 

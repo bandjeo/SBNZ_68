@@ -11,27 +11,27 @@ declare Test
     @timestamp(timestamp)
 end
 
-
-rule "Only one negative test"
-    when
-        $list: List(size == 1) from collect(Test())
-        Test(result == false)
-        $tr: TestsReview()
-    then
-        $tr.setDischarge(true);
+query getLatestNegative(Number retval, List list)
+    retval:= Number() from accumulate(Test($timestamp: timestamp, result == false) from list,
+                max($timestamp))
 end
 
 rule "Last test negative"
     when
-        accumulate(Test($timestamp: timestamp, result == false),
-                    $latestNegative: max($timestamp))
+        $list: List() from collect(Test())
+        getLatestNegative($latestNegative, $list;)
         $latestNegativeTest: Test(timestamp == $latestNegative)
+
         not(exists(Test(result == true, this after $latestNegativeTest)))
+
         exists(Test(this before[20s] $latestNegativeTest, result == false))
-        accumulate(Test($timestamp: timestamp, result == false, this before[20s] $latestNegativeTest),
-                            $otherNegative: max($timestamp))
+
+        $otherList: List() from collect(Test(this before[20s] $latestNegativeTest))
+        getLatestNegative($otherNegative, $otherList;)
         $otherNegativeTest: Test(timestamp == $otherNegative)
+
         not(exists(Test(result == true, this after $otherNegativeTest)))
+
         $tr: TestsReview()
     then
         $tr.setDischarge(true);

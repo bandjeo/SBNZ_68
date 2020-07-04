@@ -19,7 +19,6 @@ rule "Online form age"
 
     then
         $evaluation.setScoreMultiplier($evaluation.getScoreMultiplier() * (2 + ($form.getAge()-60)/10.0));
-        DebugHelper.debugLhsValue("Anamnesis check risk group");
         update($evaluation)
     end
 
@@ -30,7 +29,6 @@ rule "Online form riskGroup"
         $form: OnlineForm(riskGroup)
     then
         $evaluation.setScoreMultiplier($evaluation.getScoreMultiplier() * 2);
-        DebugHelper.debugLhsValue("Anamnesis check risk group");
         update($evaluation)
     end
 
@@ -43,7 +41,6 @@ rule "Online form score"
             sum($s) )
     then
         $evaluation.setScore($score.doubleValue());
-        DebugHelper.debugLhsValue("Anamnesis check risk group");
         update($evaluation)
     end
 
