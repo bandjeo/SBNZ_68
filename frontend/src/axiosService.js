@@ -61,17 +61,17 @@ export const patientTestStatus = (patientId) => {
     })
 }
 
-export const getRules = () => {
+export const getRules = (fileName) => {
     return axios({
         method: "get",
-        url: rulesURL
+        url: rulesURL + '/' + fileName
     })
 }
 
-export const postRules = (data) => {
+export const postRules = (data, fileName) => {
     return axios({
         method: "post",
-        url: rulesURL,
+        url: rulesURL + '/' + fileName,
         data: { message: data }
     })
 }
